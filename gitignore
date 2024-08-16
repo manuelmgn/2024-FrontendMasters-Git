@@ -1,0 +1,7 @@
+.*
+
+*.rsls
+*.rslsc
+*.workspace
+
+arquivoTemporario
