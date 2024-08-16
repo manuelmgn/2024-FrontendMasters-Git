@@ -1,5 +1,5 @@
-# Year - Academy - Name of the course
+# 2024 - Frontend Masters - Everything You'll Need to Know About Git
 
-Notes for the course "xxx" taught by xxx at xxx.
+Notes for the course "Everything You'll Need to Know About Git" taught by ThePrimeagen at Frontend Masters.
 
-Month Year.
+August 2024.
