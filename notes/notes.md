@@ -12,12 +12,17 @@
     - [HEAD](#head)
       - [Reflog](#reflog)
     - [Cherry Pick](#cherry-pick)
+  - [Remote repositories](#remote-repositories)
+    - [Fetch](#fetch)
+    - [Pull](#pull)
+    - [Push](#push)
+  - [Conflict resolution](#conflict-resolution)
 
 
 ## Intro
 
 - `man`
-- `man git-<op>`for the friendly manual
+- `man git-<op>` for the friendly manual
 
 - repo
 - `commit`: a point in time representing the project **in its entirey**, not just the differentials.
@@ -148,7 +153,7 @@ Let's switch our branch to foo, create a new file (second.md), make two commits 
 
 This is the setup. A contains trunk and foo is at C.
 
-```
+```git
     B - C foo
    /
   A       trunk
@@ -275,7 +280,8 @@ It allows us to see where HEAD has been. `git reflog`.
 
 We can specify the number of lines we want to see: `git reflog -3`.
 
-**Problem**. 1. Create a new branch off of trunk, call it baz. 2. Add one commit to baz. Do it in a new file baz.md. 3. Switch back to trunk and delete baz (git branch -D baz from earlier). 4. Can you bring back from the dead the commit sha of baz?
+**Problem**. 1. Create a new branch off of trunk, call it baz. 2. Add one commit to baz. Do it in a new file baz.md. 3. Switch back to trunk and delete baz (`git branch -D baz` from earlier). 4. Can you bring back from the dead the commit sha of baz?
+
 1. `git checkout trunk`, `git checkout -b baz`.
 2. `echo "baz" >> baz.md && git add baz.md && git commit -m "baz"`.
 3. `git checkout trunk`, `git branch -D baz`.
@@ -297,3 +303,146 @@ All that would be easier just using `git merge dd85b51`. The problem with it is 
 So let's suppose we didn't use the previous method and that we didn't recover baz.md. Now we'll use cherry pick.
 
 ![git cherry-pick dd85b51](<img/cherry picking.png>)
+
+## Remote repositories
+
+Often we need code changes that have been created by our fellow frienemies.
+
+A remote is simply a copy of the repo somewhere else.
+
+**Distributed Version Control**. A remote is just another git repo that is of the same project and has changes we may need.
+
+To add a remote the syntax is: `git remote add <name> <uri>`.
+
+- Two naming conventions:
+  1. Case 1: If I have only a singular authoritative repo, meaning that there is mine plus the one I'm pushing up to on GitHub, then I'll call that one **`origin`**. This is the *source of truth* repo.
+  2. Case 2: Sometimes (this is typical when you're at like a job), you have a fork of the authoritative repos. You have your main one, and then you have your fork. The fork would be **`origin`** and the authoritative one, the true one, the one to rule them all, I call that one **`upstream`**.
+
+### Fetch
+
+We can fetch all the git state from our remote repository by executing `git fetch`. This wont update the current branches checked out, just where the origin/* has them set to.
+
+We're creating a new folder with a new repo called git-remote.
+Its origin will be our second repo.
+
+```js
+git remote add origin ../second-repo
+
+git remote -v
+/*
+origin  ../second-repo  (fetch)
+origin  ../second-repo  (push)
+*/
+
+git fetch
+/*
+remote: Enumerating objects: 30, done.
+remote: Counting objects: 100% (30/30), done.
+remote: Compressing objects: 100% (19/19), done.
+remote: Total 30 (delta 6), reused 0 (delta 0), pack-reused 0
+Unpacking objects: 100% (30/30), 2.17 KiB | 277.00 KiB/s, done.
+From ../second-repo
+ * [new branch]      bar              -> origin/bar
+ * [new branch]      foo              -> origin/foo
+ * [new branch]      foo-rebase-trunk -> origin/foo-rebase-trunk
+ * [new branch]      trunk            -> origin/trunk
+ * [new branch]      trunk-merge-foo  -> origin/trunk-merge-foo
+*/
+
+git log
+/*
+fatal: your current branch 'main' does not have any commits yet
+*/
+```
+
+As we can see, our main branch is still diverging from the other repo. The reason is we've only fetched the changes, we haven't merged the changes into ours, we haven't updated anything.
+
+```js
+git log origin/trunk --oneline
+/*
+1200578 (origin/trunk) baz
+321fcf0 (origin/bar) Y
+e65eafb X
+2bffa4f E
+ec41551 D
+6bba11c A
+*/
+```
+
+The trunk SHA of the origin is the same of the SHA of the other repo. It exists in two repos.
+
+With `git branch -a` we'll see all branches that currently exists. 
+![git branch -a](<img/git branch -a.png>)
+This is telling us that, effectively, we have no branches, just a bunch from the remote.
+
+To update our main branch from the main one of the repo (trunk) we can merge it. So `git merge origin/trunk`. With `git log --oneline` we'll see that main and trunk will point to the same spot.
+![git log --oneline](<img/log with main and trunk.png>).
+
+### Pull
+
+Git pull is just a convenient form of what we just got done doing,**fetches the changes, and then merges those changes into your branch**.
+
+`git pull <remote> <branch>`
+
+**Problem**. 1) Add a line at the end of README.md in hello-git and commit it with message A remote change (we go the repo, `vi README.md`, `git add .`, `git status`, `git commit -m 'A remote change'`). 2) Execute git pull in remote-git. 3) Think about the error. Why does it exist?
+
+![git pull error](<img/git pull error.png>)
+
+The reason is that we did not setup our main branch to track the origin/trunk branch. Git will not automatically track state in a "remote" because that may not be what you want to do. Therefore if you git pull it wont know where to pull from since nothing has been specified. This becomes even more obvious once you have more than one remote.
+
+Its often convenient to setup tracking because we can use push and pull without specifying the target branch. Git assumes that just because two branches have the same name doesn't mean they are the same. So you need to tell git to track branches manually on preexisting branches.
+
+`git branch --set-upstream-to=origin/trunk main`. Now we can pull because it knows where to pull stuff in from.
+
+![git branch and pull](<img/git branch and pull.png>)
+
+**What about rebase?** ThePrimeagen: *Typically whenever I pull in changes from the remote authority repo I will rebase the changes in. The reason why? Is that again, I like a nice clean history. Any changes I'm making I prefer my changes at the tip. I do not like adding in a bunch of merge commits. Because if I want to do testing again, I don't want my changes somewhere deep within the history, I wanted exactly at the end where I could edit those. I could squash those, I can change them,they're still my changes until I commit them to the public repo. This is a personal preference, but I think its a superiour one :)*
+
+- A long lived branch with a bunch of merge commits is much more difficult to revert.
+- If every change is a single commit, then the ability to revert is very trivial.
+- I prefer to test my changes against the current state of master not against the current state i have fetched
+
+> Extra tip.
+> There is a config for it. There are two strategies for rebaseing changes.
+> 
+> 1. add --rebase flag to a pull. `git pull --rebase`
+> 2. edit your config to make this behavior the default behavior. (good thing we know about how the config works) ➜  `remote-git git:(trunk) git config --add --global pull.rebase true`
+
+### Push
+
+If you wish take your changes and move the remote repo, you can do this by using git push. Much like pull, if you are not "tracking" then you cannot simply git push but instead you will have to specify the remote and branch name.
+
+Fun Facts
+- `git push <remote> <local_name>:<remote_name>` allows you to push and have it received with a different name
+- `git push <remote> :<remote_name>` will delete a branch on the remote
+
+**Problem**. Create a single commit, "CHANGE FROM REMOTE", as a one line change to the end of README.md to branch bar. Then push the changes back to hello-git. Validate the change made it to hello-git's bar branch.
+
+```js
+git checkout bar
+/*branch 'bar' set up to track 'origin/bar'.
+Switched to a new branch 'bar'*/
+vi README.md
+git status
+git add .
+git commit -m "CHANGE FROM REMOTE"
+/*[bar bf4290e] CHANGE FROM REMOTE
+ 1 file changed, 1 insertion(+)*/
+git push
+/*Enumerating objects: 5, done.
+Counting objects: 100% (5/5), done.
+Delta compression using up to 8 threads
+Compressing objects: 100% (2/2), done.
+Writing objects: 100% (3/3), 305 bytes | 305.00 KiB/s, done.
+Total 3 (delta 0), reused 0 (delta 0), pack-reused 0
+To ../second-repo
+   321fcf0..bf4290e  bar -> bar*/
+```
+
+If we switch to the other repo and execute `git log bar --oneline`, we'll see it updated, with `bf4290e (bar) CHANGE FROM REMOTE` at the top.
+
+The astute observer will notice that **bar's branch on `hello-git` was moved forward... why?**
+
+We fetched the results, it didn't move our branches forward, but why wouldn't we push it to do it? Well, we're not checked out, right?That branch isn't checked out.We're not using that branch in any sort of capacity and we're doing a push, which is analogous to doing like a fetch and a merge.We're just doing it for them. And so that's what's happening on the other side, it's fetching, it's merging,it's updating its reference for bar, and there we go.It's like the opposite of pull.
+
+## Conflict resolution
