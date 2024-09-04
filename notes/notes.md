@@ -17,6 +17,7 @@
     - [Pull](#pull)
     - [Push](#push)
   - [Conflict resolution](#conflict-resolution)
+    - [Stashing](#stashing)
 
 
 ## Intro
@@ -447,3 +448,21 @@ We fetched the results, it didn't move our branches forward, but why wouldn't we
 
 ## Conflict resolution
 
+### Stashing
+
+> Use git stash when you want to record the current state of the working directory and the index, but want to go back to a clean working directory. The command saves your local modifications away and reverts the working directory to match the HEAD commit.
+
+*`stash` takes every track change by git inside the index and the working tree and stores them kind of into a special area the work in progress area, this stash area, and you can think of stash like a stack of temporary changes.*
+
+> Stash is a STACK of temporary changes
+
+- `git stash`
+- `git stash -m "<message>"`
+- `git stash list`    list of stashes
+- `git stash show [--index <index>]`: just show the changes or the diff
+- `git stash pop`     pop the lastest stash
+- `git stash pop --index <index>`: works well with git stash list
+
+**Problem**. use branch trunk. 1) create an upstream change. Commit a small change to hello-git `echo "upstream change" >> upstream.md`
+2) add a small change to remote-git don't commit `echo "downstream change" >> README.md`. 3) now that we have an active tracked change pull in the upstream change
+What error do you get?

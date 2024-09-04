@@ -36,3 +36,8 @@
 - `git fetch`:          fetch all the git state from the remote repository
 - `git pull <remote> <branch>`:           fetch changes and merge them into the branch
 - `git push`
+- `git stash`:          takes every change tracked by git and stores that result into the "stash"
+  - `git stash -m "<message>"`
+  - `git stash list`    list of stashes
+  - `git stash show [--index <index>]`: just show the changes or the diff
+  - `git stash pop`     pop the lastest stash
