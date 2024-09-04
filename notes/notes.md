@@ -446,3 +446,4 @@ The astute observer will notice that **bar's branch on `hello-git` was moved for
 We fetched the results, it didn't move our branches forward, but why wouldn't we push it to do it? Well, we're not checked out, right?That branch isn't checked out.We're not using that branch in any sort of capacity and we're doing a push, which is analogous to doing like a fetch and a merge.We're just doing it for them. And so that's what's happening on the other side, it's fetching, it's merging,it's updating its reference for bar, and there we go.It's like the opposite of pull.
 
 ## Conflict resolution
+
