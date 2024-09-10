@@ -466,3 +466,4 @@ We fetched the results, it didn't move our branches forward, but why wouldn't we
 **Problem**. use branch trunk. 1) create an upstream change. Commit a small change to hello-git `echo "upstream change" >> upstream.md`
 2) add a small change to remote-git don't commit `echo "downstream change" >> README.md`. 3) now that we have an active tracked change pull in the upstream change
 What error do you get?
+(...)
