@@ -19,17 +19,16 @@
   - [Conflict resolution](#conflict-resolution)
     - [Stashing](#stashing)
 
-
 ## Intro
 
 - `man`
 - `man git-<op>` for the friendly manual
 
 - repo
-- `commit`: a point in time representing the project **in its entirey**, not just the differentials.
-- 'staging area' or index: where you prepare the changes you wish to commit. When you commit, anything in the staging area will be commited. Unstaged items won't be committed.
+- `commit`: a point in time representing the project **in its entirely**, not just the differentials.
+- 'staging area' or index: where you prepare the changes you wish to commit. When you commit, anything in the staging area will be committed. Unstaged items won't be committed.
 - 'squash': to take several commits and turn it into one commit. Technically would be taking N commits and turning it into N-1 to 1 commit, but typically its N commits to 1 commit.
-- 'work tree', 'working tree' or 'main working tree': your git repo. this is the set of files that represent your project. Your working tree is setup by `git init` or `git clone`. 
+- 'work tree', 'working tree' or 'main working tree': your git repo. this is the set of files that represent your project. Your working tree is setup by `git init` or `git clone`.
 - untracked → staged → (commit) → tracked
 
 ### Key facts about Git
@@ -51,7 +50,6 @@ Git graph
 - To add a key value, execute `git config --add --global <key> "<value>"`
 - You can view any value of git config by executing `git config --get <key>`
 
-
 ## The first repo
 
 (...)
@@ -67,7 +65,7 @@ Git graph
   - `--no-decorate`, `--decorate[=short|full|auto|no]`. Print out the ref names of any commits that are shown. If short is specified, the ref name prefixes refs/heads/, refs/tags/ and refs/remotes/ will not be printed. If full is specified, the full ref name (including prefix) will be printed. If auto is specified, then if the output is going to a terminal, the ref names are shown as if short were given, otherwise no ref names are shown. The option --decorate is short-hand for --decorate=short. Default to configuration value of log.decorate if configured, otherwise, auto.
   - `--graph`. Draw a text-based graphical representation of the commit history on  the left hand side of the output.
 
-`--decorate` is not really that useful, but it is when you export the log to a file. `git log --graph > out` will not print the `(HEAD -> main)` part of the log. It will when the command is `git log --graph --decorate > out`. 
+`--decorate` is not really that useful, but it is when you export the log to a file. `git log --graph > out` will not print the `(HEAD -> main)` part of the log. It will when the command is `git log --graph --decorate > out`.
 ![git log --graph --decorate > out](img/log-decorate.png)
 
 The are ways to inspect files within the git's data store. `git cat-file -p <some-sha>` will echo out the contents of the sha. This can be a commit, a tree or a blob.
@@ -81,7 +79,7 @@ We can follow the trace of the SHAs to cat the content of a committed file:
 
 ## Git config
 
-`git config --add --global <key> <value>`. Remember: every `key` is made up of two distinct parts, **section** and **keyname** (`section.keyname`). 
+`git config --add --global <key> <value>`. Remember: every `key` is made up of two distinct parts, **section** and **keyname** (`section.keyname`).
 
 **To remove a section**: `git config --remove-section <section>`.
 
@@ -115,12 +113,14 @@ git config --unset-all fem.dev
 
 We remove those values using `--unset`, but in cases where we have multiple value for one key, we should unset all at once, `git config --unset-all fem.dev`.
 
-> [!important]
+>[!important]
 > **`--global` vs `--local`**
-> 
-> Remember if you're using `--global` to add these sections and keys. If you added with with `--global`, now you should remove them with it. `git config --global --unset-all fem.dev`.
-> If you added them without this (or including `--local`, which is the same), you should delete them (or print them or whatever) in local.
-> We can have the same keys and values both in local and in global.
+>
+>Remember if you're using `--global` to add these sections and keys. If you added with with `--global`, now you should remove them with it. `git config --global --unset-all fem.dev`.
+>
+>If you added them without this (or including `--local`, which is the same), you should delete them (or print them or whatever) in local.
+>
+>We can have the same keys and values both in local and in global.
 
 Now let's **remove an entire section** using `--remove-section`.
 
@@ -134,8 +134,8 @@ This is where git branches come in. They are cheap, virtually free, to create. W
 
 New branch: `git branch <name>`. This will just create it, git won't jump to the new branch.
 
-We check our branches with `git branch`. 
-Using `git log` we'll see that HEAD points to trunk, but there's also foo. Foo it's at the exact same place. **When we create a branch it branches off wherever you're at. It's pointing to the same commit**. 
+We check our branches with `git branch`.
+Using `git log` we'll see that HEAD points to trunk, but there's also foo. Foo it's at the exact same place. **When we create a branch it branches off wherever you're at. It's pointing to the same commit**.
 
 **A branch POINTS to a commit, it is not a set of changes.**
 
@@ -160,19 +160,19 @@ This is the setup. A contains trunk and foo is at C.
   A       trunk
 ```
 
-**Deleting branches**: `-d` or `-D`. 
+**Deleting branches**: `-d` or `-D`.
 
 ### Merge
 
 We have A, B and C, but here's what we desire now:
 
-```
+```md
    B --- C    foo
  /
 A --- D --- E trunk
 ```
 
-So we switch to trunk and, edit README.md twice and commit each time with D and then E (`git switch trunk`, `echo "D" >> README.md`, `git add README.md`, `git commit -m "D"`...). Let's see what `git log --oneline` shows: 
+So we switch to trunk and, edit README.md twice and commit each time with D and then E (`git switch trunk`, `echo "D" >> README.md`, `git add README.md`, `git commit -m "D"`...). Let's see what `git log --oneline` shows:
 
 ![git log --oneline output](<img/git log --oneline commits.png>)
 
@@ -186,9 +186,9 @@ Now let's check foo with `git log --oneline foo`:
 
 To put it simply, the first in common parent is the best common ancestor. git then merges the sets of commits onto the merge base and creates a new commit at the tip of the branch that is being merged on with all the changes combined into one commit.
 
-**How to do it?** → `git merge <branchname>`. The branch you are on is the target branch and the branch you name in `<branchname>` will be the source branch. 
+**How to do it?** → `git merge <branch-name>`. The branch you are on is the target branch and the branch you name in `<branch-name>` will be the source branch.
 
-**Problem**. Given the following state, merge foo onto trunk. Since we want to keep foo and trunk in its current state for other problems later in this lesson. Please start by branching off of trunk. 
+**Problem**. Given the following state, merge foo onto trunk. Since we want to keep foo and trunk in its current state for other problems later in this lesson. Please start by branching off of trunk.
 
 1. We create a new branch (trunk-merge-foo) and we switch to it: `git checkout -b trunk-merge-foo`.
 2. `git merge foo`. We're asked to write a commit message.
@@ -248,10 +248,10 @@ Rebase updates the commit where the branch originally points to. This also means
 
 The basic steps of rebase is the following:
 
-1. Execute `git rebase <targetbranch>`. I will refer to the current branch as `<currentbranch>` later on.
-2. Checkout the latest commit on `<targetbranch>`, switching branches to the target branch.
-3. Play one commit at a time from `<currentbranch>`. It's gonna take the branch that you were on, the current branch, and play the commits one at a time Time in order onto the target branch.
-4. Once finished will update `<currentbranch>` to the current commit SHA. It will go back check out your current branch and update current branch to point to that latest commit.
+1. Execute `git rebase <target-branch>`. I will refer to the current branch as `<current-branch>` later on.
+2. Checkout the latest commit on `<target-branch>`, switching branches to the target branch.
+3. Play one commit at a time from `<current-branch>`. It's gonna take the branch that you were on, the current branch, and play the commits one at a time Time in order onto the target branch.
+4. Once finished will update `<current-branch>` to the current commit SHA. It will go back check out your current branch and update current branch to point to that latest commit.
 
 **Problem**. Rebase foo with trunk. Please create a separate branch foo-rebase-trunk. This branch should be created off of foo. Once you have rebased foo-rebase-trunk with trunk check out the git logs with --graph and --decorate to see what has happened (--oneline can make it easier to read).
 
@@ -307,7 +307,7 @@ So let's suppose we didn't use the previous method and that we didn't recover ba
 
 ## Remote repositories
 
-Often we need code changes that have been created by our fellow frienemies.
+Often we need code changes that have been created by our fellow *frienemies*.
 
 A remote is simply a copy of the repo somewhere else.
 
@@ -372,7 +372,7 @@ ec41551 D
 
 The trunk SHA of the origin is the same of the SHA of the other repo. It exists in two repos.
 
-With `git branch -a` we'll see all branches that currently exists. 
+With `git branch -a` we'll see all branches that currently exists.
 ![git branch -a](<img/git branch -a.png>)
 This is telling us that, effectively, we have no branches, just a bunch from the remote.
 
@@ -397,15 +397,15 @@ Its often convenient to setup tracking because we can use push and pull without 
 
 ![git branch and pull](<img/git branch and pull.png>)
 
-**What about rebase?** ThePrimeagen: *Typically whenever I pull in changes from the remote authority repo I will rebase the changes in. The reason why? Is that again, I like a nice clean history. Any changes I'm making I prefer my changes at the tip. I do not like adding in a bunch of merge commits. Because if I want to do testing again, I don't want my changes somewhere deep within the history, I wanted exactly at the end where I could edit those. I could squash those, I can change them,they're still my changes until I commit them to the public repo. This is a personal preference, but I think its a superiour one :)*
+**What about rebase?** ThePrimeagen: *Typically whenever I pull in changes from the remote authority repo I will rebase the changes in. The reason why? Is that again, I like a nice clean history. Any changes I'm making I prefer my changes at the tip. I do not like adding in a bunch of merge commits. Because if I want to do testing again, I don't want my changes somewhere deep within the history, I wanted exactly at the end where I could edit those. I could squash those, I can change them,they're still my changes until I commit them to the public repo. This is a personal preference, but I think its a superior one :)*
 
 - A long lived branch with a bunch of merge commits is much more difficult to revert.
 - If every change is a single commit, then the ability to revert is very trivial.
 - I prefer to test my changes against the current state of master not against the current state i have fetched
 
 > Extra tip.
-> There is a config for it. There are two strategies for rebaseing changes.
-> 
+> There is a config for it. There are two strategies for rebasing changes.
+>
 > 1. add --rebase flag to a pull. `git pull --rebase`
 > 2. edit your config to make this behavior the default behavior. (good thing we know about how the config works) ➜  `remote-git git:(trunk) git config --add --global pull.rebase true`
 
@@ -413,9 +413,10 @@ Its often convenient to setup tracking because we can use push and pull without 
 
 If you wish take your changes and move the remote repo, you can do this by using git push. Much like pull, if you are not "tracking" then you cannot simply git push but instead you will have to specify the remote and branch name.
 
-Fun Facts
-- `git push <remote> <local_name>:<remote_name>` allows you to push and have it received with a different name
-- `git push <remote> :<remote_name>` will delete a branch on the remote
+>**Fun Facts**
+>
+>- `git push <remote> <local_name>:<remote_name>` allows you to push and have it received with a different name
+>- `git push <remote> :<remote_name>` will delete a branch on the remote
 
 **Problem**. Create a single commit, "CHANGE FROM REMOTE", as a one line change to the end of README.md to branch bar. Then push the changes back to hello-git. Validate the change made it to hello-git's bar branch.
 
@@ -460,7 +461,7 @@ We fetched the results, it didn't move our branches forward, but why wouldn't we
 - `git stash -m "<message>"`
 - `git stash list`    list of stashes
 - `git stash show [--index <index>]`: just show the changes or the diff
-- `git stash pop`     pop the lastest stash
+- `git stash pop`     pop the latest stash
 - `git stash pop --index <index>`: works well with git stash list
 
 **Problem**. use branch trunk. 1) create an upstream change. Commit a small change to hello-git `echo "upstream change" >> upstream.md`
