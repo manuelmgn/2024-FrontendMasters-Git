@@ -108,7 +108,6 @@ git config --get-all fem.dev
 // This will show all fem.dev values
 
 git config --unset-all fem.dev
-
 ```
 
 We remove those values using `--unset`, but in cases where we have multiple value for one key, we should unset all at once, `git config --unset-all fem.dev`.
