@@ -22,7 +22,6 @@
 
 -   `man`
 -   `man git-<op>` for the friendly manual
-
 -   repo
 -   `commit`: a point in time representing the project **in its entirely**, not just the differentials.
 -   'staging area' or index: where you prepare the changes you wish to commit. When you commit, anything in the staging area will be committed. Unstaged items won't be committed.
@@ -304,7 +303,7 @@ So let's suppose we didn't use the previous method and that we didn't recover ba
 
 ## Remote repositories
 
-Often we need code changes that have been created by our fellow _frienemies_.
+Often we need code changes that have been created by our fellow _frenemies_.
 
 A remote is simply a copy of the repo somewhere else.
 
